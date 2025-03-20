@@ -1,7 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://d3jle81ytgbvf"]
+[gd_scene load_steps=2 format=3 uid="uid://c6wpb4dhaw07d"]
 
 [ext_resource type="Script" uid="uid://t48pyo2h6epw" path="res://scenes/ui/debug_ui.gd" id="1_8x783"]
-[ext_resource type="LabelSettings" uid="uid://b7ln3sbxa4hll" path="res://scenes/ui/debug-label-theme.tres" id="2_rmw4l"]
 
 [node name="DebugUI" type="CanvasLayer"]
 script = ExtResource("1_8x783")
@@ -11,7 +10,7 @@ anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -56.0
+offset_top = -176.0
 grow_horizontal = 2
 grow_vertical = 0
 
@@ -20,6 +19,7 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_top = -24.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/margin_left = 5
@@ -36,19 +36,15 @@ columns = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 8
 text = "Movement Range"
-label_settings = ExtResource("2_rmw4l")
 
 [node name="PathLabel" type="Label" parent="DebugPanel/MarginContainer/DebugUIGrid"]
 layout_mode = 2
 text = "Player path:"
-label_settings = ExtResource("2_rmw4l")
 
 [node name="PositionLabel" type="Label" parent="DebugPanel/MarginContainer/DebugUIGrid"]
 layout_mode = 2
 text = "Screen Position: "
-label_settings = ExtResource("2_rmw4l")
 
 [node name="PlayerMovingToLabel" type="Label" parent="DebugPanel/MarginContainer/DebugUIGrid"]
 layout_mode = 2
 text = "Player Moving to:"
-label_settings = ExtResource("2_rmw4l")

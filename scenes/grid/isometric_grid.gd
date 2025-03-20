@@ -918,6 +918,7 @@ func _explode_player():
 	
 	# Create explosion particles
 	var explosion = CPUParticles2D.new()
+	explosion.process_mode = Node.PROCESS_MODE_ALWAYS
 	add_child(explosion)
 	
 	# Set position to player position
@@ -926,8 +927,8 @@ func _explode_player():
 	# Configure particle properties
 	explosion.emitting = true
 	explosion.amount = 50
-	explosion.lifetime = 0.5
-	explosion.explosiveness = 0.9
+	explosion.lifetime = 0.3
+	explosion.explosiveness = 1.2
 	explosion.emission_shape = CPUParticles2D.EMISSION_SHAPE_SPHERE
 	explosion.spread = 180
 	explosion.gravity = Vector2(0, 98)
@@ -940,7 +941,7 @@ func _explode_player():
 	# Set a timer to queue_free the particles after they're done
 	var timer = Timer.new()
 	add_child(timer)
-	timer.wait_time = 1.5
+	timer.wait_time = 0.8
 	timer.one_shot = true
 	timer.timeout.connect(func(): explosion.queue_free(); timer.queue_free())
 	timer.start()
