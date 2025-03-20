@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://dd6q144b1hchf"]
+
+[ext_resource type="Script" uid="uid://cifwbjnus8my5" path="res://scenes/grid/grid_overlay_system.gd" id="1_m5nt7"]
+
+
+[node name="GridOverlaySystem" type="Node2D"]
+z_index = 10
+script = ExtResource("1_m5nt7") 

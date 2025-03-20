@@ -1,0 +1,15 @@
+# Game state ideas for state machine
+
+START
+READY
+ACTIVE
+=> Game Mode States
+==> SETUP
+==> COUNTDOWN
+==> EXPLORATION
+==> TIME_CRITICAL
+==> ROUND_END
+PAUSED
+ROUND_WIN
+ROUND_LOSS
+RESTARTING

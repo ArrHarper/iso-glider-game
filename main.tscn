@@ -1,0 +1,35 @@
+[gd_scene load_steps=10 format=3 uid="uid://efp3lt4w6s5h"]
+
+[ext_resource type="PackedScene" uid="uid://dnakvksxvqb5b" path="res://scenes/grid/isometric_grid.tscn" id="1_avm8j"]
+[ext_resource type="PackedScene" uid="uid://d3jle81ytgbvf" path="res://scenes/ui/debug_ui.tscn" id="2_2yk30"]
+[ext_resource type="PackedScene" uid="uid://b8cfxmovhsxs4" path="res://scenes/grid/grid_sprite_placer.tscn" id="3_4ewph"]
+[ext_resource type="PackedScene" uid="uid://bweoiw1202apo" path="res://scenes/grid/fog_of_war.tscn" id="4_f5kyg"]
+[ext_resource type="PackedScene" uid="uid://dd6q144b1hchf" path="res://scenes/grid/grid_overlay_system.tscn" id="5_272bh"]
+[ext_resource type="PackedScene" uid="uid://cwv5p3t6386pq" path="res://scenes/grid/poi_system.tscn" id="5_pzgoe"]
+[ext_resource type="PackedScene" path="res://scenes/grid/terrain_system.tscn" id="6_2m3ns"]
+[ext_resource type="PackedScene" uid="uid://b2uuefibpf52u" path="res://scenes/ui/main_ui.tscn" id="6_6wejm"]
+[ext_resource type="PackedScene" uid="uid://bv6f7fwl4j3a2" path="res://scenes/challenge/challenge_ui.tscn" id="10_26yd2"]
+
+[node name="Main" type="Node2D"]
+
+[node name="IsometricGrid" parent="." instance=ExtResource("1_avm8j")]
+z_index = 10
+position = Vector2(769, 336)
+debug_mode = true
+debug_ui_scene = ExtResource("2_2yk30")
+
+[node name="FogOfWar" parent="IsometricGrid" instance=ExtResource("4_f5kyg")]
+
+[node name="POISystem" parent="IsometricGrid" instance=ExtResource("5_pzgoe")]
+
+[node name="TerrainSystem" parent="IsometricGrid" instance=ExtResource("6_2m3ns")]
+
+[node name="GridOverlaySystem" parent="IsometricGrid" instance=ExtResource("5_272bh")]
+
+[node name="DebugUI" parent="." instance=ExtResource("2_2yk30")]
+
+[node name="MainUI" parent="." instance=ExtResource("6_6wejm")]
+
+[node name="ChallengeUI" parent="." instance=ExtResource("10_26yd2")]
+
+[node name="GridSpritePlacer" parent="." instance=ExtResource("3_4ewph")]

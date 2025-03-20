@@ -1,0 +1,13 @@
+modes/
+  base_mode/
+    base_mode.tscn
+    base_mode.gd
+    base_config.tres
+  time_limited/
+    time_limited.tscn
+    time_limited.gd
+    time_limited_config.tres
+  permadeath/
+    permadeath.tscn
+    permadeath.gd
+    permadeath_config.tres

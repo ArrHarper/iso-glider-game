@@ -1,0 +1,5 @@
+3738b01 added terrain system and tweaked generation rules
+014e86a reorganized project folders, fixed broken refs
+c31b571 refactored grid movement to use state machine
+237555a cleaned up highlight function and path calculation source of truth
+7848c04 adjusted signal chain logic around player starting position, updated relevant script refs

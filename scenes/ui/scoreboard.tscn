@@ -1,0 +1,94 @@
+[gd_scene load_steps=2 format=3 uid="uid://dr6a22ew1ybrm"]
+
+[ext_resource type="Script" path="res://scenes/ui/scoreboard.gd" id="1_dvtjj"]
+
+[node name="Scoreboard" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_dvtjj")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = -125.0
+offset_right = 150.0
+offset_bottom = 125.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="InnerContainer" type="VBoxContainer" parent="Panel/VBoxContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="TitleLabel" type="Label" parent="Panel/VBoxContainer/MarginContainer/InnerContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "GAME OVER"
+horizontal_alignment = 1
+
+[node name="HighScoresLabel" type="Label" parent="Panel/VBoxContainer/MarginContainer/InnerContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "High Scores"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="Panel/VBoxContainer/MarginContainer/InnerContainer"]
+layout_mode = 2
+
+[node name="ScoresList" type="VBoxContainer" parent="Panel/VBoxContainer/MarginContainer/InnerContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HSeparator2" type="HSeparator" parent="Panel/VBoxContainer/MarginContainer/InnerContainer"]
+layout_mode = 2
+
+[node name="CurrentScore" type="Label" parent="Panel/VBoxContainer/MarginContainer/InnerContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Your Score: $0"
+horizontal_alignment = 1
+
+[node name="ButtonsContainer" type="HBoxContainer" parent="Panel/VBoxContainer/MarginContainer/InnerContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="CloseButton" type="Button" parent="Panel/VBoxContainer/MarginContainer/InnerContainer/ButtonsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Close"
+
+[node name="ResetButton" type="Button" parent="Panel/VBoxContainer/MarginContainer/InnerContainer/ButtonsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Reset Game" 

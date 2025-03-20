@@ -1,0 +1,47 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="Iso Move"
+run/main_scene="uid://efp3lt4w6s5h"
+config/features=PackedStringArray("4.4", "Forward Plus")
+config/icon="res://icon.svg"
+
+[autoload]
+
+DebugCommands="*res://scenes/ui/debug_commands.gd"
+GameManager="*res://scripts/game_manager.gd"
+ChallengeMode="*res://scenes/challenge/challenge_mode.tscn"
+
+[display]
+
+window/size/viewport_width=900
+window/size/viewport_height=720
+window/stretch/mode="canvas_items"
+window/stretch/scale=2.0
+window/stretch/scale_mode="integer"
+
+[file_customization]
+
+folder_colors={
+"res://docs/": "pink",
+"res://images/": "pink",
+"res://scenes/": "pink",
+"res://scenes/grid/": "orange",
+"res://scenes/player/": "orange",
+"res://scenes/ui/": "orange",
+"res://scripts/": "green"
+}
+
+[rendering]
+
+renderer/rendering_method="forward_rendering"
+viewport/transparent_background=true

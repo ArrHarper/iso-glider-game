@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=3 uid="uid://b8cfxmovhsxs4"]
+
+[ext_resource type="Script" uid="uid://bpwjc3k1olatb" path="res://scenes/grid/grid_sprite_placer.gd" id="1_o3mng"]
+[ext_resource type="PackedScene" uid="uid://chg68yx6sksm1" path="res://scenes/grid/grid_sprite.tscn" id="2_2d1nt"]
+
+[node name="GridSpritePlacer" type="Node2D"]
+script = ExtResource("1_o3mng")
+grid_sprite_scene = ExtResource("2_2d1nt")

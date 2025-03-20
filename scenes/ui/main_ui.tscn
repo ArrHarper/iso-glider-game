@@ -1,0 +1,117 @@
+[gd_scene load_steps=2 format=3 uid="uid://b2uuefibpf52u"]
+
+[ext_resource type="Script" uid="uid://b3fqqsm3pgosr" path="res://scenes/ui/main_ui.gd" id="1_lk43v"]
+
+[node name="MainUI" type="CanvasLayer"]
+script = ExtResource("1_lk43v")
+
+[node name="TurnsPanel" type="Panel" parent="."]
+unique_name_in_owner = true
+offset_left = 5.0
+offset_top = 5.0
+offset_right = 90.0
+offset_bottom = 95.0
+
+[node name="MarginContainer" type="MarginContainer" parent="TurnsPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TurnsPanel/MarginContainer"]
+layout_mode = 2
+
+[node name="TurnsLabel" type="Label" parent="TurnsPanel/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+text = "Turns: 20"
+horizontal_alignment = 1
+
+[node name="MoneyLabel" type="Label" parent="TurnsPanel/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+text = "Money: $0"
+horizontal_alignment = 1
+
+[node name="TotalMoneyLabel" type="Label" parent="TurnsPanel/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+text = "Total: $0"
+horizontal_alignment = 1
+
+[node name="RoundLabel" type="Label" parent="TurnsPanel/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+text = "Round: 1"
+horizontal_alignment = 1
+
+[node name="CountdownLabel" type="Label" parent="."]
+unique_name_in_owner = true
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 48
+text = "2"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MoveConfirmDialog" type="Panel" parent="."]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -125.0
+offset_top = -75.0
+offset_right = 125.0
+offset_bottom = 75.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MoveConfirmDialog"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="MoveInfoLabel" type="Label" parent="MoveConfirmDialog/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Move to tile"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MoveConfirmDialog/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="ConfirmButton" type="Button" parent="MoveConfirmDialog/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Confirm"
+
+[node name="CancelButton" type="Button" parent="MoveConfirmDialog/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Cancel"

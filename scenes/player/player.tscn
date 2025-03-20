@@ -1,0 +1,19 @@
+[gd_scene load_steps=2 format=3 uid="uid://huswqbec7prq"]
+
+[ext_resource type="Script" uid="uid://brmwnesa4mslb" path="res://scenes/player/player_movement.gd" id="1_rkvvk"]
+
+[node name="CharacterBody2D" type="CharacterBody2D"]
+script = ExtResource("1_rkvvk")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+position = Vector2(-6.55651e-07, 0.74316)
+scale = Vector2(0.729167, 0.611224)
+build_mode = 1
+polygon = PackedVector2Array(-8, -8, 0, -12, 8, -8, 8.22857, 0.420207, 6.85714, 6.96446, 0.063787, 11.3976, -6.85714, 6.96446, -8.22857, 0.420207)
+
+[node name="Circle" type="Node2D" parent="."]
+
+[node name="Polygon" type="Polygon2D" parent="Circle"]
+scale = Vector2(0.55, 0.55)
+color = Color(1, 0, 0, 1)
+polygon = PackedVector2Array(0, -9, 10, -7, 9, 0, 8, 8, 0, 12, -8, 8, -9, 0, -10, -7)

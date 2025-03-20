@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://dlj2y2qnmcvup"]
+
+[ext_resource type="Script" uid="uid://bk6qivggk5o7m" path="res://scenes/grid/grid_overlay_component_template.gd" id="1_kj2n4"]
+
+
+[node name="GridOverlayComponent" type="Node"]
+script = ExtResource("1_kj2n4")
+overlay_color = Color(0, 0.7, 1, 0.7) 

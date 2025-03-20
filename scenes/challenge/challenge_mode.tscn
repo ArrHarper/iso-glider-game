@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://db02axabj2h4u"]
+
+[ext_resource type="Script" path="res://scenes/challenge/challenge_mode.gd" id="1_clwlb"]
+
+[node name="ChallengeMode" type="Node"]
+script = ExtResource("1_clwlb") 
