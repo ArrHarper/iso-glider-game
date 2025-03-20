@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://scenes/challenge/challenge_ui.gd" id="1_ww84l"]
 
 [node name="ChallengeUI" type="CanvasLayer"]
+layer = 6
 script = ExtResource("1_ww84l")
 
 [node name="Panel" type="Panel" parent="."]
@@ -27,11 +28,13 @@ theme_override_constants/margin_bottom = 5
 layout_mode = 2
 theme_override_constants/separation = 5
 
+
 [node name="Label" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 10
-text = "Challenge"
+text = "Challenge Mode"
 horizontal_alignment = 1
+
 
 [node name="TimerLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
@@ -40,8 +43,9 @@ theme_override_font_sizes/font_size = 12
 text = "00:10"
 horizontal_alignment = 1
 
+
 [node name="ChallengeButton" type="Button" parent="Panel/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 10
-text = "Enable" 
+text = "Time Trial" 

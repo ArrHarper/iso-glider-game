@@ -21,8 +21,9 @@ signal movement_confirmed(confirmed)
 @onready var turns_panel = %TurnsPanel
 @onready var countdown_label = %CountdownLabel
 
-var scoreboard_scene = preload("res://scenes/ui/scoreboard.tscn")
-var scoreboard = null
+# Reference the scoreboard scene for editor use
+const SCOREBOARD_SCENE = preload("res://scenes/ui/scoreboard.tscn")
+@onready var scoreboard = get_node_or_null("Scoreboard")
 
 const DEFAULT_MAX_TURNS = 20
 var turns_remaining = DEFAULT_MAX_TURNS
@@ -37,11 +38,13 @@ var player_has_moved = false # Track if player has moved away from start
 var challenge_mode = null
 
 func _ready():
-	# Find or create scoreboard
-	scoreboard = get_node_or_null("Scoreboard")
+	# If scoreboard doesn't exist in the editor scene, create it at runtime
 	if not scoreboard:
-		scoreboard = scoreboard_scene.instantiate()
+		scoreboard = SCOREBOARD_SCENE.instantiate()
 		add_child(scoreboard)
+	
+	# Ensure scoreboard is initially hidden
+	if scoreboard:
 		scoreboard.visible = false
 	
 	# Connect move confirmation dialog buttons
@@ -157,19 +160,19 @@ func cancel_move():
 # Update the turns display
 func update_turns_display():
 	if turns_label:
-		turns_label.text = str(turns_remaining)
+		turns_label.text = "Turns: " + str(turns_remaining)
 
 # Update the money display
 func update_money_display():
 	if money_label:
-		money_label.text = "$" + str(player_money)
+		money_label.text = "Money: $" + str(player_money)
 	if total_money_label:
-		total_money_label.text = "$" + str(total_money)
+		total_money_label.text = "Total: $" + str(total_money)
 
 # Update the round display
 func update_round_display():
 	if round_label:
-		round_label.text = "Round " + str(current_round)
+		round_label.text = "Round: " + str(current_round)
 
 # Set the player's starting position
 func set_player_start_position(pos):
@@ -274,7 +277,7 @@ func _on_game_manager_game_over(final_score):
 	
 	# Show the scoreboard
 	if scoreboard:
-		scoreboard.show_score(final_score)
+		scoreboard.show_score(final_score, current_round)
 
 # Reset the turns counter for a new game
 func reset_turns():

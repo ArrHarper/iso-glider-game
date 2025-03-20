@@ -21,13 +21,22 @@ func _ready():
 
 ## Centralized function to manage all signal connections
 func _setup_signals():
-	# Connect to isometric grid signals if available
-	var grid = get_tree().get_nodes_in_group("isometric_grid")
-	if grid.size() > 0:
-		var isometric_grid = grid[0]
-		# Connect to player_movement_range signal if we need to react to changes
+	# Try to find the isometric grid in the scene tree first (preferred)
+	var isometric_grid = get_tree().current_scene.get_node_or_null("IsometricGrid")
+	
+	# Fallback to finding via group if necessary
+	if not isometric_grid:
+		var grid_nodes = get_tree().get_nodes_in_group("isometric_grid")
+		if grid_nodes.size() > 0:
+			isometric_grid = grid_nodes[0]
+	
+	# Connect to grid signals if found
+	if isometric_grid:
+		# Connect to player_movement_range signal if it exists
 		if isometric_grid.has_signal("player_movement_range"):
 			isometric_grid.connect("player_movement_range", func(range_value): update_debug_text("", Vector2.ZERO, Vector2.ZERO))
+	else:
+		push_error("DebugUI: Could not find IsometricGrid node!")
 	
 	# Future signal connections would go here
 	pass

@@ -9,10 +9,12 @@ signal game_reset
 signal round_reset
 signal player_died
 signal player_victory
+signal high_score_achieved(score_data, position)
 
 const SAVE_FILE = "user://high_scores.save"
 const MAX_SCORES = 10
 const DEFAULT_TURN_LIMIT = 20
+const DEFAULT_PLAYER_NAME = "Unknown"
 
 var current_money = 0
 var total_money = 0
@@ -25,7 +27,7 @@ var player_start_position = null
 var player_current_position = null
 var game_paused = false
 var game_ended = false
-var is_game_ending = false # Flag to track if we're during the ending sequence
+var is_game_ending = false
 
 func _ready():
 	load_high_scores()
@@ -71,7 +73,7 @@ func end_game(is_victory: bool = false):
 	print("Game over! Final score: ", total_money)
 	
 	# Add score to high scores
-	add_high_score(total_money)
+	add_high_score(total_money, current_round)
 	
 	# If player died (not victory), trigger explosion
 	if not is_victory:
@@ -141,9 +143,8 @@ func reset_round():
 	# Signal round reset to all systems
 	emit_signal("round_reset")
 	
-	# If in challenge mode, handle the round countdown
-	if challenge_mode and challenge_mode.is_active:
-		challenge_mode.external_reset_request()
+	# Note: Challenge mode now responds directly to the round_won signal from IsometricGrid 
+	# and handles its own state transition sequence
 
 # Reset player position to starting position
 func reset_player_position():
@@ -226,48 +227,116 @@ func update_player_position(grid_pos, is_start_position = false):
 			challenge_mode.stop_timer()
 
 # Add score to high scores if it qualifies
-func add_high_score(score: int):
+func add_high_score(score: int, rounds: int, player_name: String = DEFAULT_PLAYER_NAME):
 	# Ignore scores of 0
 	if score <= 0:
 		return
+	
+	# Create score data dictionary
+	var score_data = {
+		"money": score,
+		"rounds": rounds,
+		"name": player_name
+	}
+	
+	# Check if the score qualifies for the high scores list
+	var qualifies = false
+	var position = -1
+	
+	# If we have fewer than MAX_SCORES, any non-zero score qualifies
+	if high_scores.size() < MAX_SCORES:
+		qualifies = true
 		
-	high_scores.append(score)
-	high_scores.sort()
-	high_scores.reverse() # Highest first
+	# Otherwise, check if this score is higher than the lowest score
+	elif high_scores.size() > 0:
+		# Sort first (in case it's not already sorted)
+		high_scores.sort_custom(func(a, b): return a.money > b.money)
+		
+		# Check if score is higher than the lowest
+		if score > high_scores[high_scores.size() - 1].money:
+			qualifies = true
 	
-	# Trim to max scores
-	if high_scores.size() > MAX_SCORES:
-		high_scores.resize(MAX_SCORES)
+	# Add the score if it qualifies
+	if qualifies:
+		high_scores.append(score_data)
+		high_scores.sort_custom(func(a, b): return a.money > b.money)
+		
+		# Find the position of the new score
+		for i in range(high_scores.size()):
+			if high_scores[i].money == score and high_scores[i].rounds == rounds:
+				position = i
+				break
+		
+		# Trim to max scores
+		if high_scores.size() > MAX_SCORES:
+			high_scores.resize(MAX_SCORES)
+		
+		# Emit signal for high score achieved
+		emit_signal("high_score_achieved", score_data, position)
+		
+		save_high_scores()
+		emit_signal("scores_updated", high_scores)
 	
-	save_high_scores()
-	emit_signal("scores_updated", high_scores)
+	return qualifies
+
+# Update player name for a high score
+func update_high_score_name(position: int, new_name: String):
+	if position >= 0 and position < high_scores.size():
+		high_scores[position].name = new_name
+		save_high_scores()
+		emit_signal("scores_updated", high_scores)
 
 # Save high scores to disk
 func save_high_scores():
 	var save_data = FileAccess.open(SAVE_FILE, FileAccess.WRITE)
 	if save_data:
-		for score in high_scores:
-			save_data.store_line(str(score))
+		for score_data in high_scores:
+			# Save as JSON string to preserve dictionary structure
+			var json_string = JSON.stringify(score_data)
+			save_data.store_line(json_string)
 
 # Load high scores from disk
 func load_high_scores():
+	high_scores.clear()
+	
 	if FileAccess.file_exists(SAVE_FILE):
 		var save_data = FileAccess.open(SAVE_FILE, FileAccess.READ)
-		high_scores.clear()
 		
 		while save_data.get_position() < save_data.get_length():
-			var score_text = save_data.get_line()
-			var score = int(score_text)
+			var json_string = save_data.get_line()
 			
-			# Only add scores greater than 0
-			if score > 0:
-				high_scores.append(score)
-	else:
-		high_scores = []
+			# Parse the JSON data
+			var json = JSON.new()
+			var error = json.parse(json_string)
+			
+			if error == OK:
+				var score_data = json.get_data()
+				
+				# Handle both old format (integers) and new format (dictionaries)
+				if typeof(score_data) == TYPE_DICTIONARY:
+					# New format
+					if score_data.money > 0:
+						high_scores.append(score_data)
+				elif typeof(score_data) == TYPE_INT:
+					# Old format - convert to new format
+					if score_data > 0:
+						high_scores.append({
+							"money": score_data,
+							"rounds": 1, # Assume at least one round for backwards compatibility
+							"name": DEFAULT_PLAYER_NAME
+						})
+			else:
+				# Try to handle old format (just integers)
+				var score = int(json_string)
+				if score > 0:
+					high_scores.append({
+						"money": score,
+						"rounds": 1, # Assume at least one round for backwards compatibility
+						"name": DEFAULT_PLAYER_NAME
+					})
 	
-	# Sort the scores in descending order
-	high_scores.sort()
-	high_scores.reverse()
+	# Sort the scores in descending order by money
+	high_scores.sort_custom(func(a, b): return a.money > b.money)
 	
 	emit_signal("scores_updated", high_scores)
 
@@ -275,5 +344,11 @@ func load_high_scores():
 func get_formatted_high_scores() -> Array:
 	var formatted = []
 	for i in range(high_scores.size()):
-		formatted.append("#%d: $%d" % [i + 1, high_scores[i]])
+		var score = high_scores[i]
+		formatted.append("#%d: %s - $%d (Rounds: %d)" % [
+			i + 1,
+			score.name,
+			score.money,
+			score.rounds
+		])
 	return formatted

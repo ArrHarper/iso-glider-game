@@ -4,6 +4,7 @@ extends CanvasLayer
 @onready var challenge_button = %ChallengeButton
 @onready var panel = $Panel
 
+# Reference to challenge mode - will be set in _ready
 var challenge_mode = null
 
 func _ready():
@@ -15,12 +16,8 @@ func _ready():
 	# Connect button signal
 	challenge_button.pressed.connect(_on_challenge_button_pressed)
 	
-	# Look for challenge mode
-	challenge_mode = get_node_or_null("/root/ChallengeMode")
-	
-	if not challenge_mode:
-		# Try to find challenge mode in the current scene
-		challenge_mode = get_tree().current_scene.get_node_or_null("ChallengeMode")
+	# Look for challenge mode (should be in the Main scene now)
+	challenge_mode = get_tree().current_scene.get_node_or_null("ChallengeMode")
 	
 	# If we still don't have it, something is wrong
 	if not challenge_mode:
@@ -40,13 +37,11 @@ func _ready():
 	
 	# Position panel exactly below TurnsPanel
 	await get_tree().process_frame
-	var turns_panel = get_node_or_null("/root/Main/MainUI/TurnsPanel")
+	var turns_panel = get_tree().current_scene.get_node_or_null("MainUI/TurnsPanel")
 	if turns_panel and panel:
 		panel.position.y = turns_panel.position.y + turns_panel.size.y + 5
-		print("Positioned ChallengeUI panel at y:", panel.position.y)
-		print("TurnsPanel bottom position:", turns_panel.position.y + turns_panel.size.y)
 	else:
-		print("Could not find TurnsPanel to position ChallengeUI")
+		push_error("Could not find TurnsPanel to position ChallengeUI")
 
 func _on_challenge_button_pressed():
 	if challenge_mode:
@@ -72,6 +67,6 @@ func _on_time_changed(time_left: float):
 func _update_button_text(is_active: bool):
 	if challenge_button:
 		if is_active:
-			challenge_button.text = "Disable"
+			challenge_button.text = "Return"
 		else:
 			challenge_button.text = "Enable"

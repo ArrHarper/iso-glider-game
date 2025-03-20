@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://b2uuefibpf52u"]
+[gd_scene load_steps=3 format=3 uid="uid://cbau84eyu8fsj"]
 
-[ext_resource type="Script" uid="uid://b3fqqsm3pgosr" path="res://scenes/ui/main_ui.gd" id="1_lk43v"]
+[ext_resource type="Script" path="res://scenes/ui/main_ui.gd" id="1_lk43v"]
+[ext_resource type="PackedScene" path="res://scenes/ui/scoreboard.tscn" id="2_kkdxw"]
 
 [node name="MainUI" type="CanvasLayer"]
 script = ExtResource("1_lk43v")
@@ -17,6 +18,7 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_top = 11.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/margin_left = 5
@@ -115,3 +117,6 @@ text = "Confirm"
 [node name="CancelButton" type="Button" parent="MoveConfirmDialog/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 text = "Cancel"
+
+[node name="Scoreboard" parent="." instance=ExtResource("2_kkdxw")]
+visible = false

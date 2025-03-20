@@ -812,6 +812,38 @@ func _on_movement_confirmed(confirmed):
 	else:
 		print("ERROR: Movement state machine not initialized")
 
+# Set movement state from external systems (like challenge mode)
+func set_movement_state(state_name: String):
+	if not movement_state:
+		print("ERROR: Movement state machine not initialized")
+		return
+		
+	# Get the movement state enum
+	var MovementState = get_movement_state_enum()
+	
+	# Convert string state name to enum value
+	match state_name.to_upper():
+		"IDLE":
+			movement_state.transition_to(MovementState.IDLE)
+			print("Movement state changed to IDLE")
+		"HOVER":
+			movement_state.transition_to(MovementState.HOVER)
+			print("Movement state changed to HOVER")
+		"PATH_PLANNED":
+			movement_state.transition_to(MovementState.PATH_PLANNED)
+			print("Movement state changed to PATH_PLANNED")
+		"MOVEMENT_EXECUTING":
+			movement_state.transition_to(MovementState.MOVEMENT_EXECUTING)
+			print("Movement state changed to MOVEMENT_EXECUTING")
+		"MOVEMENT_COMPLETED":
+			movement_state.transition_to(MovementState.MOVEMENT_COMPLETED)
+			print("Movement state changed to MOVEMENT_COMPLETED")
+		"IMMOBILE":
+			movement_state.transition_to(MovementState.IMMOBILE)
+			print("Movement state changed to IMMOBILE")
+		_:
+			print("ERROR: Unknown movement state: ", state_name)
+
 # Handle player movement completion
 func _on_player_movement_completed():
 	player_is_moving = false
@@ -1118,9 +1150,9 @@ func find_gridlocked_path(start_pos: Vector2, target_pos: Vector2, max_steps: in
 		return [start_pos]
 	
 	# If target is impassable terrain, return empty array
-	#if target_pos in impassable_tiles:
-		#print("Target position is impassable terrain")
-		#return []
+	# if target_pos in impassable_tiles:
+	# 	print("Target position is impassable terrain")
+	# 	return []
 	
 	# If target is out of range, return empty array
 	var manhattan_dist = abs(start_pos.x - target_pos.x) + abs(start_pos.y - target_pos.y)

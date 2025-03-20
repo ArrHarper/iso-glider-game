@@ -45,6 +45,16 @@ func _ready():
 	game_manager = get_node_or_null("/root/GameManager")
 	if not game_manager:
 		print("WARNING: GameManager not found in challenge mode")
+		
+	# Connect to IsometricGrid's round_won signal for challenge mode functionality
+	var main_scene = get_tree().current_scene
+	var grid = main_scene.get_node_or_null("IsometricGrid")
+	if grid and grid.has_signal("round_won"):
+		if not grid.is_connected("round_won", _on_round_won):
+			grid.connect("round_won", _on_round_won)
+			print("Connected to IsometricGrid round_won signal")
+	else:
+		print("WARNING: IsometricGrid not found or doesn't have round_won signal in challenge mode")
 
 func _process(delta):
 	if countdown_active:
@@ -69,8 +79,14 @@ func start_round_countdown():
 	# Set player to immobile during countdown
 	var main_scene = get_tree().current_scene
 	var grid = main_scene.get_node_or_null("IsometricGrid")
-	if grid and "movement_state" in grid and grid.movement_state:
-		grid.movement_state.transition_to(grid.movement_state.MovementState.IMMOBILE)
+	if grid:
+		if grid.has_method("set_movement_state"):
+			grid.set_movement_state("IMMOBILE")
+		elif "movement_state" in grid and grid.movement_state:
+			if grid.movement_state.has_method("transition_to"):
+				grid.movement_state.transition_to(grid.movement_state.MovementState.IMMOBILE)
+	else:
+		push_error("ChallengeMode: Could not find IsometricGrid to immobilize player")
 	
 	# Start countdown
 	countdown_active = true
@@ -84,8 +100,14 @@ func _start_new_round():
 	var grid = main_scene.get_node_or_null("IsometricGrid")
 	
 	# Allow player movement again - this will trigger an immediate redraw
-	if grid and "movement_state" in grid and grid.movement_state:
-		grid.movement_state.transition_to(grid.movement_state.MovementState.IDLE)
+	if grid:
+		if grid.has_method("set_movement_state"):
+			grid.set_movement_state("IDLE")
+		elif "movement_state" in grid and grid.movement_state:
+			if grid.movement_state.has_method("transition_to"):
+				grid.movement_state.transition_to(grid.movement_state.MovementState.IDLE)
+	else:
+		push_error("ChallengeMode: Could not find IsometricGrid to restore player movement")
 		
 	# Wait until next frame before starting timer to ensure visuals are updated
 	await get_tree().process_frame
@@ -185,8 +207,32 @@ func get_formatted_time() -> String:
 
 ## Allow external systems to request a reset of challenge mode state
 func external_reset_request():
+	print("external_reset_request called in challenge mode")
+	
+	# Reset challenge mode state
 	reset_challenge_state()
-	print("Challenge mode externally reset")
+	print("Challenge mode state reset")
+	
+	# Wait for a frame to ensure everything is properly reset
+	await get_tree().process_frame
 	
 	# Start round countdown for new round
+	print("Starting round countdown sequence")
 	start_round_countdown()
+	print("Round countdown sequence started")
+
+func _on_round_won():
+	print("Round won signal received in challenge mode")
+	
+	# Give GameManager time to handle its win_round logic first
+	# This ensures all game state is properly reset before we start the countdown
+	await get_tree().create_timer(1.2).timeout
+	
+	# Reset challenge mode state
+	reset_challenge_state()
+	print("Challenge mode state reset")
+	
+	# Start round countdown for new round
+	print("Starting round countdown sequence")
+	start_round_countdown()
+	print("Round countdown sequence started")

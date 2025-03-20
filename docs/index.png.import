@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://didr66tt8k744"
-path="res://.godot/imported/Iso Move.png-715260b2d69ededaef9cf61e9cdbc756.ctex"
+uid="uid://bgene4b5gkalo"
+path="res://.godot/imported/index.png-0c78d14d192abe5f22f8c25928ca1ab8.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Iso Move.png"
-dest_files=["res://.godot/imported/Iso Move.png-715260b2d69ededaef9cf61e9cdbc756.ctex"]
+source_file="res://docs/index.png"
+dest_files=["res://.godot/imported/index.png-0c78d14d192abe5f22f8c25928ca1ab8.ctex"]
 
 [params]
 

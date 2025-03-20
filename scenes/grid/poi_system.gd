@@ -311,6 +311,7 @@ func create_poi_sprite(grid_pos):
 	var shape_key = available_shapes[randi() % available_shapes.size()]
 	available_shapes.erase(shape_key) # Remove shape so it's not used again
 	
+	# Create the POI polygon
 	var polygon = Polygon2D.new()
 	polygon.polygon = SHAPES[shape_key]
 	polygon.color = SHAPE_COLORS[shape_key] # Use shape-specific color
@@ -320,6 +321,157 @@ func create_poi_sprite(grid_pos):
 	
 	# Add to our tracking dictionary
 	poi_sprites[grid_pos] = polygon
+
+# Play collection effect at the given position
+func _play_collection_effect(position):
+	# Create a particle system for the collection effect
+	var particles = GPUParticles2D.new()
+	particles.position = position
+	particles.z_index = 30 # Above POIs
+	
+	# Create particle material
+	var particle_material = ParticleProcessMaterial.new()
+	
+	# Set up the particle properties
+	particle_material.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_POINT
+	particle_material.direction = Vector3(0, -1, 0) # Up direction
+	particle_material.spread = 20.0 # Tighter spread for more upward motion
+	particle_material.initial_velocity_min = 50.0 # Higher velocity for more upward movement
+	particle_material.initial_velocity_max = 80.0
+	particle_material.gravity = Vector3(0, 20.0, 0) # Less gravity to keep particles going upward
+	particle_material.scale_min = 0.4 # 20% of original size (was 2.0)
+	particle_material.scale_max = 1.0 # 20% of original size (was 5.0)
+	particle_material.color = Color("00ffdd", 0.7) # Cyan color with 0.7 alpha
+	particle_material.color_ramp = _create_color_gradient(Color("00ffdd", 0.7))
+	
+	# Set particle count and lifetime
+	particles.amount = 20
+	particles.lifetime = 1.5
+	particles.one_shot = true
+	particles.explosiveness = 0.8
+	particles.process_material = particle_material
+	
+	# Create a triangle texture for the particle
+	var texture = _create_particle_texture()
+	particles.texture = texture
+	
+	# Add to scene and set to auto-delete when finished
+	add_child(particles)
+	particles.emitting = true
+	
+	# Create a timer to remove the particles when done
+	var timer = Timer.new()
+	timer.wait_time = particles.lifetime + 0.5 # Add a little extra time
+	timer.one_shot = true
+	add_child(timer)
+	timer.timeout.connect(func():
+		particles.queue_free()
+		timer.queue_free()
+	)
+	timer.start()
+
+# Create a simple color gradient for the particles
+func _create_color_gradient(base_color):
+	var gradient = Gradient.new()
+	
+	# Start with the base color at full alpha
+	var start_color = base_color
+	start_color.a = 1.0
+	
+	# End with the base color faded out
+	var end_color = base_color
+	end_color.a = 0.0
+	
+	gradient.colors = PackedColorArray([start_color, end_color])
+	gradient.offsets = PackedFloat32Array([0.0, 1.0])
+	
+	var gradient_texture = GradientTexture1D.new()
+	gradient_texture.gradient = gradient
+	
+	return gradient_texture
+
+# Create a triangle texture for particles
+func _create_particle_texture():
+	# Choose which particle shape to use
+	return _create_dollar_sign_texture()
+	# Other options we could use:
+	# return _create_triangle_texture()
+	# return _create_star_texture()
+
+# Create a triangle texture
+func _create_triangle_texture():
+	var image = Image.create(8, 8, false, Image.FORMAT_RGBA8)
+	image.fill(Color(0, 0, 0, 0)) # Start with transparent background
+	
+	# Draw a triangle by setting pixels
+	for y in range(8):
+		for x in range(8):
+			# Create a triangle shape
+			if y <= x and y <= 7 - x:
+				image.set_pixel(x, y, Color(1, 1, 1, 1))
+	
+	var texture = ImageTexture.create_from_image(image)
+	return texture
+
+# Create a dollar sign ($) texture
+func _create_dollar_sign_texture():
+	var image = Image.create(12, 12, false, Image.FORMAT_RGBA8)
+	image.fill(Color(0, 0, 0, 0)) # Start with transparent background
+	
+	# Dollar sign pattern
+	var dollar_pattern = [
+		"...XXXX....",
+		"..XX..XX...",
+		".XX...X....",
+		".XX........",
+		".XXXXX.....",
+		"...XXXXX...",
+		".....XXXX..",
+		"........XX.",
+		"....X...XX.",
+		"...XX..XX..",
+		"....XXXX...",
+		"...XXXX...."
+	]
+	
+	# Draw the pattern
+	for y in range(12):
+		for x in range(12):
+			if y < dollar_pattern.size() and x < dollar_pattern[y].length():
+				if dollar_pattern[y][x] == "X":
+					image.set_pixel(x, y, Color(1, 1, 1, 1))
+	
+	var texture = ImageTexture.create_from_image(image)
+	return texture
+
+# Create a star texture
+func _create_star_texture():
+	var image = Image.create(10, 10, false, Image.FORMAT_RGBA8)
+	image.fill(Color(0, 0, 0, 0)) # Start with transparent background
+	
+	# Star pattern
+	var star_pattern = [
+		"....X.....",
+		"....X.....",
+		"...XXX....",
+		"XXXXXXXXXX",
+		".XXXXXXXX.",
+		"..XXXXXX..",
+		"...XXXX...",
+		"..XX..XX..",
+		".X......X.",
+		"X........X"
+	]
+	
+	# Draw the pattern
+	for y in range(10):
+		for x in range(10):
+			if y < star_pattern.size() and x < star_pattern[y].length():
+				if star_pattern[y][x] == "X":
+					image.set_pixel(x, y, Color(1, 1, 1, 1))
+	
+	var texture = ImageTexture.create_from_image(image)
+	return texture
 
 ## Called when the player moves to a new grid position
 func _on_player_moved(grid_pos: Vector2):
@@ -368,6 +520,8 @@ func _on_player_moved(grid_pos: Vector2):
 		
 		if sprite_to_remove:
 			if is_instance_valid(sprite_to_remove):
+				# Play collection effect before removing sprite
+				_play_collection_effect(sprite_to_remove.position)
 				sprite_to_remove.queue_free()
 			poi_sprites.erase(key_to_remove)
 		
@@ -407,10 +561,10 @@ func collect_poi(grid_position):
 			poi_key_to_remove = pos
 			break
 	
-	# Remove the sprite
-	if sprite_to_remove:
-		if is_instance_valid(sprite_to_remove):
-			sprite_to_remove.queue_free()
+	# Play collection effect before removing sprite
+	if sprite_to_remove and is_instance_valid(sprite_to_remove):
+		_play_collection_effect(sprite_to_remove.position)
+		sprite_to_remove.queue_free()
 		poi_sprites.erase(poi_key_to_remove)
 	
 	# Generate random reward amount
