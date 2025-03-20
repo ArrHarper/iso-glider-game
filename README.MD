@@ -42,11 +42,6 @@ Isometric Extraction is a turn-based tactical survival game set on an 8x8 isomet
 - **Standard Mode:** Complete each round by collecting POIs and returning to your start position.
 - **Challenge Mode:** Test your skills with additional obstacles and objectives.
 
-## Technical Requirements
-
-- Godot 4.4 or later
-- Keyboard and mouse
-
 ## Credits
 
 Developed as an isometric game prototype using Godot Engine.
