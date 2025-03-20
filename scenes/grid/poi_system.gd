@@ -336,22 +336,22 @@ func _play_collection_effect(position):
 	particle_material.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_POINT
 	particle_material.direction = Vector3(0, -1, 0) # Up direction
 	particle_material.spread = 20.0 # Tighter spread for more upward motion
-	particle_material.initial_velocity_min = 50.0 # Higher velocity for more upward movement
-	particle_material.initial_velocity_max = 80.0
-	particle_material.gravity = Vector3(0, 20.0, 0) # Less gravity to keep particles going upward
-	particle_material.scale_min = 0.4 # 20% of original size (was 2.0)
-	particle_material.scale_max = 1.0 # 20% of original size (was 5.0)
-	particle_material.color = Color("00ffdd", 0.7) # Cyan color with 0.7 alpha
-	particle_material.color_ramp = _create_color_gradient(Color("00ffdd", 0.7))
+	particle_material.initial_velocity_min = 30.0 # Reduced velocity
+	particle_material.initial_velocity_max = 50.0 # Reduced velocity
+	particle_material.gravity = Vector3(0, 30.0, 0) # Increased gravity to bring particles down sooner
+	particle_material.scale_min = 0.4 # 20% of original size
+	particle_material.scale_max = 1.0 # 20% of original size
+	particle_material.color = Color("#FFFF00") # Bright yellow
+	particle_material.color_ramp = _create_color_gradient(Color("#FFFF00"))
 	
 	# Set particle count and lifetime
 	particles.amount = 20
-	particles.lifetime = 1.5
+	particles.lifetime = 1.0 # Shorter lifetime
 	particles.one_shot = true
 	particles.explosiveness = 0.8
 	particles.process_material = particle_material
 	
-	# Create a triangle texture for the particle
+	# Create a texture for the particle
 	var texture = _create_particle_texture()
 	particles.texture = texture
 	
@@ -361,7 +361,7 @@ func _play_collection_effect(position):
 	
 	# Create a timer to remove the particles when done
 	var timer = Timer.new()
-	timer.wait_time = particles.lifetime + 0.5 # Add a little extra time
+	timer.wait_time = particles.lifetime + 0.2 # Shorter buffer time
 	timer.one_shot = true
 	add_child(timer)
 	timer.timeout.connect(func():
@@ -370,20 +370,20 @@ func _play_collection_effect(position):
 	)
 	timer.start()
 
-# Create a simple color gradient for the particles
+# Create a color gradient for the particles
 func _create_color_gradient(base_color):
 	var gradient = Gradient.new()
 	
 	# Start with the base color at full alpha
 	var start_color = base_color
-	start_color.a = 1.0
 	
-	# End with the base color faded out
+	# End with the base color fully transparent
 	var end_color = base_color
 	end_color.a = 0.0
 	
-	gradient.colors = PackedColorArray([start_color, end_color])
-	gradient.offsets = PackedFloat32Array([0.0, 1.0])
+	# Add intermediate points for faster initial fade
+	gradient.colors = PackedColorArray([start_color, Color(start_color.r, start_color.g, start_color.b, 0.7), Color(start_color.r, start_color.g, start_color.b, 0.3), end_color])
+	gradient.offsets = PackedFloat32Array([0.0, 0.3, 0.6, 1.0])
 	
 	var gradient_texture = GradientTexture1D.new()
 	gradient_texture.gradient = gradient
@@ -393,85 +393,108 @@ func _create_color_gradient(base_color):
 # Create a triangle texture for particles
 func _create_particle_texture():
 	# Choose which particle shape to use
-	return _create_dollar_sign_texture()
+	return _create_plus_sign_texture()
 	# Other options we could use:
 	# return _create_triangle_texture()
+	# return _create_dollar_sign_texture()
 	# return _create_star_texture()
 
-# Create a triangle texture
-func _create_triangle_texture():
-	var image = Image.create(8, 8, false, Image.FORMAT_RGBA8)
+# Create a plus sign (+) texture
+func _create_plus_sign_texture():
+	var image = Image.create(9, 9, false, Image.FORMAT_RGBA8)
 	image.fill(Color(0, 0, 0, 0)) # Start with transparent background
 	
-	# Draw a triangle by setting pixels
-	for y in range(8):
-		for x in range(8):
-			# Create a triangle shape
-			if y <= x and y <= 7 - x:
-				image.set_pixel(x, y, Color(1, 1, 1, 1))
-	
-	var texture = ImageTexture.create_from_image(image)
-	return texture
-
-# Create a dollar sign ($) texture
-func _create_dollar_sign_texture():
-	var image = Image.create(12, 12, false, Image.FORMAT_RGBA8)
-	image.fill(Color(0, 0, 0, 0)) # Start with transparent background
-	
-	# Dollar sign pattern
-	var dollar_pattern = [
-		"...XXXX....",
-		"..XX..XX...",
-		".XX...X....",
-		".XX........",
-		".XXXXX.....",
-		"...XXXXX...",
-		".....XXXX..",
-		"........XX.",
-		"....X...XX.",
-		"...XX..XX..",
-		"....XXXX...",
-		"...XXXX...."
+	# Plus sign pattern - thin 1px lines
+	var plus_pattern = [
+		"....X....",
+		"...XXX...",
+		"....X....",
 	]
 	
 	# Draw the pattern
-	for y in range(12):
-		for x in range(12):
-			if y < dollar_pattern.size() and x < dollar_pattern[y].length():
-				if dollar_pattern[y][x] == "X":
+	for y in range(9):
+		for x in range(9):
+			if y < plus_pattern.size() and x < plus_pattern[y].length():
+				if plus_pattern[y][x] == "X":
 					image.set_pixel(x, y, Color(1, 1, 1, 1))
 	
 	var texture = ImageTexture.create_from_image(image)
 	return texture
 
-# Create a star texture
-func _create_star_texture():
-	var image = Image.create(10, 10, false, Image.FORMAT_RGBA8)
-	image.fill(Color(0, 0, 0, 0)) # Start with transparent background
+# # Create a triangle texture
+# func _create_triangle_texture():
+# 	var image = Image.create(8, 8, false, Image.FORMAT_RGBA8)
+# 	image.fill(Color(0, 0, 0, 0)) # Start with transparent background
 	
-	# Star pattern
-	var star_pattern = [
-		"....X.....",
-		"....X.....",
-		"...XXX....",
-		"XXXXXXXXXX",
-		".XXXXXXXX.",
-		"..XXXXXX..",
-		"...XXXX...",
-		"..XX..XX..",
-		".X......X.",
-		"X........X"
-	]
+# 	# Draw a triangle by setting pixels
+# 	for y in range(8):
+# 		for x in range(8):
+# 			# Create a triangle shape
+# 			if y <= x and y <= 7 - x:
+# 				image.set_pixel(x, y, Color(1, 1, 1, 1))
 	
-	# Draw the pattern
-	for y in range(10):
-		for x in range(10):
-			if y < star_pattern.size() and x < star_pattern[y].length():
-				if star_pattern[y][x] == "X":
-					image.set_pixel(x, y, Color(1, 1, 1, 1))
+# 	var texture = ImageTexture.create_from_image(image)
+# 	return texture
+
+# # Create a dollar sign ($) texture
+# func _create_dollar_sign_texture():
+# 	var image = Image.create(12, 12, false, Image.FORMAT_RGBA8)
+# 	image.fill(Color(0, 0, 0, 0)) # Start with transparent background
 	
-	var texture = ImageTexture.create_from_image(image)
-	return texture
+# 	# Dollar sign pattern
+# 	var dollar_pattern = [
+# 		"...XXXX....",
+# 		"..XX..XX...",
+# 		".XX...X....",
+# 		".XX........",
+# 		".XXXXX.....",
+# 		"...XXXXX...",
+# 		".....XXXX..",
+# 		"........XX.",
+# 		"....X...XX.",
+# 		"...XX..XX..",
+# 		"....XXXX...",
+# 		"...XXXX...."
+# 	]
+	
+# 	# Draw the pattern
+# 	for y in range(12):
+# 		for x in range(12):
+# 			if y < dollar_pattern.size() and x < dollar_pattern[y].length():
+# 				if dollar_pattern[y][x] == "X":
+# 					image.set_pixel(x, y, Color(1, 1, 1, 1))
+	
+# 	var texture = ImageTexture.create_from_image(image)
+# 	return texture
+
+# # Create a star texture
+# func _create_star_texture():
+# 	var image = Image.create(10, 10, false, Image.FORMAT_RGBA8)
+# 	image.fill(Color(0, 0, 0, 0)) # Start with transparent background
+	
+# 	# Star pattern
+# 	var star_pattern = [
+# 		"....X.....",
+# 		"....X.....",
+# 		"...XXX....",
+# 		"XXXXXXXXXX",
+# 		".XXXXXXXX.",
+# 		"..XXXXXX..",
+# 		"...XXXX...",
+# 		"..XX..XX..",
+# 		".X......X.",
+# 		"X........X"
+# 	]
+	
+# 	# Draw the pattern
+# 	for y in range(10):
+# 		for x in range(10):
+# 			if y < star_pattern.size() and x < star_pattern[y].length():
+# 				if star_pattern[y][x] == "X":
+# 					image.set_pixel(x, y, Color(1, 1, 1, 1))
+	
+# 	var texture = ImageTexture.create_from_image(image)
+# 	return texture
 
 ## Called when the player moves to a new grid position
 func _on_player_moved(grid_pos: Vector2):

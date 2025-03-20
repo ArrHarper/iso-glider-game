@@ -1,7 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://01fon2h5rinr"]
+[gd_scene load_steps=3 format=3 uid="uid://dnakvksxvqb5b"]
 
-[ext_resource type="Script" path="res://scenes/grid/isometric_grid.gd" id="1_5iurq"]
-[ext_resource type="PackedScene" uid="uid://c6t34qfq4ytdk" path="res://scenes/player/player.tscn" id="2_kvxd8"]
+[ext_resource type="Script" uid="uid://drocqxv0bm2yg" path="res://scenes/grid/isometric_grid.gd" id="1_5iurq"]
+[ext_resource type="PackedScene" uid="uid://huswqbec7prq" path="res://scenes/player/player.tscn" id="2_kvxd8"]
 
 [node name="IsometricGrid" type="Node2D"]
 position = Vector2(128, -24)

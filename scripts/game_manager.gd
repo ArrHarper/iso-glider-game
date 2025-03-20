@@ -288,18 +288,34 @@ func update_high_score_name(position: int, new_name: String):
 
 # Save high scores to disk
 func save_high_scores():
-	var save_data = FileAccess.open(SAVE_FILE, FileAccess.WRITE)
-	if save_data:
-		for score_data in high_scores:
-			# Save as JSON string to preserve dictionary structure
-			var json_string = JSON.stringify(score_data)
-			save_data.store_line(json_string)
+	if OS.has_feature("web"):
+		# Web export - use JavaScript localStorage
+		var json_array = JSON.stringify(high_scores)
+		JavaScriptBridge.eval("localStorage.setItem('high_scores', '" + json_array + "');")
+		print("High scores saved to localStorage")
+	else:
+		# Desktop/mobile - use file system
+		var save_data = FileAccess.open(SAVE_FILE, FileAccess.WRITE)
+		if save_data:
+			for score_data in high_scores:
+				# Save as JSON string to preserve dictionary structure
+				var json_string = JSON.stringify(score_data)
+				save_data.store_line(json_string)
 
 # Load high scores from disk
 func load_high_scores():
 	high_scores.clear()
 	
-	if FileAccess.file_exists(SAVE_FILE):
+	if OS.has_feature("web"):
+		# Web export - read from localStorage
+		var json_array = JavaScriptBridge.eval("localStorage.getItem('high_scores');")
+		if json_array:
+			var json = JSON.new()
+			var error = json.parse(json_array)
+			if error == OK:
+				high_scores = json.get_data()
+		print("High scores loaded from localStorage")
+	elif FileAccess.file_exists(SAVE_FILE):
 		var save_data = FileAccess.open(SAVE_FILE, FileAccess.READ)
 		
 		while save_data.get_position() < save_data.get_length():
